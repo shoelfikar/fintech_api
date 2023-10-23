@@ -33,6 +33,11 @@ func NewRouter(db *sql.DB) *mux.Router {
 	customerService := service.NewCustomerService(customerRepo, validate)
 	customerController := controller.NewCustomerController(customerService)
 
+	//tenor
+	tenorRepo := repository.NewTenorRepository(db)
+	tenorService := service.NewTenorService(tenorRepo, validate)
+	tenorController := controller.NewTenorController(tenorService)
+
 	//transaction
 	transactionRepo := repository.NewTransactionRepo(db)
 	transactionService := service.NewTransactionService(transactionRepo, validate)
@@ -44,6 +49,11 @@ func NewRouter(db *sql.DB) *mux.Router {
 	v1.HandleFunc("/customer", customerController.FindAll).Methods(http.MethodGet)
 	v1.HandleFunc("/customer/{id}", customerController.Update).Methods(http.MethodPut)
 	v1.HandleFunc("/customer/{id}", customerController.FindById).Methods(http.MethodGet)
+
+	//endpoint tenor
+	v1.HandleFunc("/tenor", tenorController.Create).Methods(http.MethodPost)
+	v1.HandleFunc("/tenor", tenorController.Update).Methods(http.MethodPut)
+	v1.HandleFunc("/tenor/customer", tenorController.GetTenorByCustomer).Methods(http.MethodPost)
 
 	//endpoint transaction
 	v1.HandleFunc("/transaction", transactionController.Create).Methods(http.MethodPost)
