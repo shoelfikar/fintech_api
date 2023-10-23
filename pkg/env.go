@@ -1,7 +1,7 @@
 package pkg
 
 import (
-	"log"
+	"fmt"
 
 	"github.com/spf13/viper"
 )
@@ -23,11 +23,11 @@ func NewViperLoad()  {
 	err := viper.ReadInConfig()
 
 	if err != nil {
-		log.Println("Error while reading config file:", err)
+		DefaultLoggingDebug(fmt.Sprintf("Error while reading config file: %v", err))
 		return
 	}
 
 
-	log.Println("success to load env config")
+	DefaultLoggingDebug("success to load env config")
 	
 }

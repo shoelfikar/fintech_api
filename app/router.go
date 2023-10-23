@@ -2,7 +2,6 @@ package app
 
 import (
 	"database/sql"
-	"log"
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
@@ -22,6 +21,7 @@ func NewRouter(db *sql.DB) *mux.Router {
 
 	//middleware
 	router.Use(exception.Recovery)
+	router.Use(middleware.LoggingMiddleware)
 	router.NotFoundHandler = http.HandlerFunc(middleware.NotFoundHandler)
 
 
@@ -59,7 +59,7 @@ func NewRouter(db *sql.DB) *mux.Router {
 	v1.HandleFunc("/transaction", transactionController.Create).Methods(http.MethodPost)
 
 
-	log.Println("server running on port " + pkg.GetViperEnvVariable("PORT"))
+	pkg.DefaultLoggingDebug("server running on port " + pkg.GetViperEnvVariable("PORT"))
 
 	return router
 }
