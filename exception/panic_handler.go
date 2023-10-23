@@ -7,6 +7,7 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/shoelfikar/kreditplus/model/web"
+	"github.com/shoelfikar/kreditplus/pkg"
 )
 
 func Recovery(next http.Handler) http.Handler {
@@ -18,6 +19,9 @@ func Recovery(next http.Handler) http.Handler {
 
 				webResponse := errorHandler(err)
 				jsonBody, _ := json.Marshal(webResponse)
+
+
+				pkg.DefaultLoggingWarning(webResponse.Message)
 
 				w.Header().Set("Content-Type", "application/json")
 				w.WriteHeader(webResponse.Code)

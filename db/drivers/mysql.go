@@ -2,7 +2,6 @@ package drivers
 
 import (
 	"database/sql"
-	"log"
 	"time"
 
 	"github.com/shoelfikar/kreditplus/pkg"
@@ -17,7 +16,7 @@ func NewMYSQL() *sql.DB {
 	db.SetConnMaxLifetime(60 * time.Minute)
 	db.SetConnMaxIdleTime(10 * time.Minute)
 
-	log.Println("success connect to mysql database")
+	pkg.DefaultLoggingDebug("success connect to mysql database")
 
 	return db
 }

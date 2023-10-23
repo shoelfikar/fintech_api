@@ -2,7 +2,6 @@ package app
 
 import (
 	"database/sql"
-	"log"
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
@@ -22,6 +21,7 @@ func NewRouter(db *sql.DB) *mux.Router {
 
 	//middleware
 	router.Use(exception.Recovery)
+	router.Use(middleware.LoggingMiddleware)
 	router.NotFoundHandler = http.HandlerFunc(middleware.NotFoundHandler)
 
 
@@ -32,6 +32,11 @@ func NewRouter(db *sql.DB) *mux.Router {
 	customerRepo := repository.NewCustomerRepository(db)
 	customerService := service.NewCustomerService(customerRepo, validate)
 	customerController := controller.NewCustomerController(customerService)
+
+	//tenor
+	tenorRepo := repository.NewTenorRepository(db)
+	tenorService := service.NewTenorService(tenorRepo, validate)
+	tenorController := controller.NewTenorController(tenorService)
 
 	//transaction
 	transactionRepo := repository.NewTransactionRepo(db)
@@ -45,11 +50,16 @@ func NewRouter(db *sql.DB) *mux.Router {
 	v1.HandleFunc("/customer/{id}", customerController.Update).Methods(http.MethodPut)
 	v1.HandleFunc("/customer/{id}", customerController.FindById).Methods(http.MethodGet)
 
+	//endpoint tenor
+	v1.HandleFunc("/tenor", tenorController.Create).Methods(http.MethodPost)
+	v1.HandleFunc("/tenor", tenorController.Update).Methods(http.MethodPut)
+	v1.HandleFunc("/tenor/customer", tenorController.GetTenorByCustomer).Methods(http.MethodPost)
+
 	//endpoint transaction
 	v1.HandleFunc("/transaction", transactionController.Create).Methods(http.MethodPost)
 
 
-	log.Println("server running on port " + pkg.GetViperEnvVariable("PORT"))
+	pkg.DefaultLoggingDebug("server running on port " + pkg.GetViperEnvVariable("PORT"))
 
 	return router
 }
