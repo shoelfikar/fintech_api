@@ -51,6 +51,8 @@ func (repo *tenorRepo) Update(ctx context.Context, tnr *domain.TenorUpdateReques
 
 	pkg.PanicIfError(err)
 
+	defer tx.Commit()
+
 	query := "UPDATE tenor SET customer_limit = ?, "
 	query += "tenor = ? "
 	query += "WHERE customer_id = ? AND id = ?"
@@ -70,6 +72,27 @@ func (repo *tenorRepo) Update(ctx context.Context, tnr *domain.TenorUpdateReques
 	}
 
 	return tnr
+}
+
+func (repo *tenorRepo) FindById(ctx context.Context, custId int, tenorId int) *domain.LimitTenor {
+	var tr *domain.LimitTenor
+	db := repo.DB
+
+	query := "SELECT id,customer_id,customer_limit,tenor FROM tenor"
+	query += "WHERE id = ? AND customer_id = ?"
+
+	errQuery := db.QueryRowContext(ctx, query, tenorId, custId).Scan(&tr.Id, &tr.CustomerId, &tr.Limit, &tr.Tenor)
+
+	if errQuery != nil {
+		if errQuery == sql.ErrNoRows {
+			panicErr := web.NotFoundError{Error: "tenor not found"}
+			panic(panicErr)
+		}
+		
+		pkg.PanicIfError(errQuery)
+	}
+
+	return tr
 }
 
 func (repo *tenorRepo) GetTenorByCustomer(ctx context.Context, tnr *domain.TenorRequest) []*domain.LimitTenor {

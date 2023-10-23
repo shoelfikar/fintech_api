@@ -6,6 +6,7 @@ type TenorReposiroty interface {
 	Save(ctx context.Context, tnr *LimitTenor) *LimitTenor
 	Update(ctx context.Context, tnr *TenorUpdateRequest) *TenorUpdateRequest
 	GetTenorByCustomer(ctx context.Context, tnr *TenorRequest) []*LimitTenor
+	FindById(ctx context.Context, custId int, tenorId int) *LimitTenor
 }
 
 type LimitTenor struct {
@@ -23,7 +24,7 @@ type TenorUpdateRequest struct {
 	Id         int   `json:"id" validate:"required"`
 	CustomerId int   `json:"customer_id" validate:"required"`
 	Limit      int64 `json:"limit"`
-	Tenor      int32 `json:"tenor" validate:"min=1"`
+	Tenor      int32 `json:"tenor"`
 }
 
 type TenorRequest struct {
