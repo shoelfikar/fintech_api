@@ -47,6 +47,7 @@ func NewRouter(db *sql.DB) *mux.Router {
 	//endpoint customer
 	v1.HandleFunc("/customer", customerController.Create).Methods(http.MethodPost)
 	v1.HandleFunc("/customer", customerController.FindAll).Methods(http.MethodGet)
+	v1.HandleFunc("/customer/ktp", customerController.GetFile).Methods(http.MethodGet)
 	v1.HandleFunc("/customer/{id}", customerController.Update).Methods(http.MethodPut)
 	v1.HandleFunc("/customer/{id}", customerController.FindById).Methods(http.MethodGet)
 
